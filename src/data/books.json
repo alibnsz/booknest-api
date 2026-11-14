@@ -1,0 +1,24 @@
+[
+  {
+    "id": "3f1c1a7e-6c1d-4a58-9a52-2f6f2b9d7a11",
+    "title": "Les Misérables",
+    "author": "Victor Hugo",
+    "category": "novel",
+    "year": 1862,
+    "status": "available",
+    "borrowedBy": null,
+    "createdAt": "2026-11-14T10:00:00.000Z",
+    "updatedAt": "2026-11-14T10:00:00.000Z"
+  },
+  {
+    "id": "9b7d0a52-1c3e-4f0b-8f61-7a2d5e4c9b10",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": "software",
+    "year": 2008,
+    "status": "borrowed",
+    "borrowedBy": "Ahmet Yılmaz",
+    "createdAt": "2026-11-14T10:05:00.000Z",
+    "updatedAt": "2026-11-14T11:20:00.000Z"
+  }
+]
