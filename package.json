@@ -1,0 +1,31 @@
+{
+  "name": "booknest-api",
+  "version": "1.0.0",
+  "description": "A clean, layered RESTful backend service for library book inventory and lending management.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "dev": "nodemon --env-file-if-exists=.env src/server.js",
+    "test": "node --test tests/"
+  },
+  "keywords": [
+    "rest-api",
+    "express",
+    "nodejs",
+    "library",
+    "inventory",
+    "layered-architecture"
+  ],
+  "author": "Mehmet Ali Bunsuz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
