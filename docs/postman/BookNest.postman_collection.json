@@ -1,0 +1,408 @@
+{
+  "info": {
+    "_postman_id": "8f29e041-4c9a-4f3b-9b1e-77a12f01d801",
+    "name": "BookNest API — v1.0",
+    "description": "Postman collection for BookNest REST API covering all CRUD endpoints, query filters, and validation cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "bookId",
+      "value": "3f1c1a7e-6c1d-4a58-9a52-2f6f2b9d7a11",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health Check (GET /health)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Service status is ok', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data.status).to.eql('ok');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "1. Create Book — Valid (POST /api/v1/books)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201 Created', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Book returned with id and timestamps', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data).to.have.property('id');",
+              "  pm.expect(json.data.status).to.eql('available');",
+              "  pm.expect(json.data.borrowedBy).to.eql(null);",
+              "  pm.collectionVariables.set('bookId', json.data.id);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Crime and Punishment\",\n  \"author\": \"Fyodor Dostoevsky\",\n  \"category\": \"novel\",\n  \"year\": 1866\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books"]
+        }
+      }
+    },
+    {
+      "name": "2. Create Book — Missing Title (POST /api/v1/books)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 400 Bad Request', function () {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "pm.test('Error code is VALIDATION_ERROR', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(false);",
+              "  pm.expect(json.error.code).to.eql('VALIDATION_ERROR');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"author\": \"Fyodor Dostoevsky\",\n  \"category\": \"novel\",\n  \"year\": 1866\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books"]
+        }
+      }
+    },
+    {
+      "name": "3. List All Books (GET /api/v1/books)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Returns array and count', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data).to.be.an('array');",
+              "  pm.expect(json.count).to.eql(json.data.length);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books"]
+        }
+      }
+    },
+    {
+      "name": "4. Get Book by ID — Existing (GET /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Returns requested book', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.eql(true);",
+              "  pm.expect(json.data.id).to.eql(pm.collectionVariables.get('bookId'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "{{bookId}}"]
+        }
+      }
+    },
+    {
+      "name": "5. Get Book by ID — Non-Existent UUID (GET /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 404 Not Found', function () {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "pm.test('Error code is BOOK_NOT_FOUND', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.error.code).to.eql('BOOK_NOT_FOUND');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/00000000-0000-4000-8000-000000000000",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "00000000-0000-4000-8000-000000000000"]
+        }
+      }
+    },
+    {
+      "name": "6. Get Book by ID — Invalid UUID (GET /api/v1/books/abc)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 400 Bad Request', function () {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "pm.test('Error code is INVALID_ID', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.error.code).to.eql('INVALID_ID');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/abc",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "abc"]
+        }
+      }
+    },
+    {
+      "name": "7. Update Book — Mark as Borrowed (PUT /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Status is borrowed and borrowedBy is set', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.data.status).to.eql('borrowed');",
+              "  pm.expect(json.data.borrowedBy).to.eql('Ahmet Yılmaz');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Crime and Punishment\",\n  \"author\": \"Fyodor Dostoevsky\",\n  \"category\": \"novel\",\n  \"year\": 1866,\n  \"status\": \"borrowed\",\n  \"borrowedBy\": \"Ahmet Yılmaz\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "{{bookId}}"]
+        }
+      }
+    },
+    {
+      "name": "8. Update Book — Borrowed Without borrowedBy (PUT /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 400 Bad Request', function () {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "pm.test('Error code is VALIDATION_ERROR', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.error.code).to.eql('VALIDATION_ERROR');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Crime and Punishment\",\n  \"author\": \"Fyodor Dostoevsky\",\n  \"category\": \"novel\",\n  \"year\": 1866,\n  \"status\": \"borrowed\",\n  \"borrowedBy\": null\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "{{bookId}}"]
+        }
+      }
+    },
+    {
+      "name": "9. Delete Book (DELETE /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 204 No Content', function () {",
+              "  pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "{{bookId}}"]
+        }
+      }
+    },
+    {
+      "name": "10. Get Book After Delete (GET /api/v1/books/:id)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 404 Not Found', function () {",
+              "  pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/books/{{bookId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "books", "{{bookId}}"]
+        }
+      }
+    },
+    {
+      "name": "11. Unknown Route (GET /unknown)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 404 Not Found', function () {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "pm.test('Error code is ROUTE_NOT_FOUND', function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.error.code).to.eql('ROUTE_NOT_FOUND');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/unknown",
+          "host": ["{{baseUrl}}"],
+          "path": ["unknown"]
+        }
+      }
+    }
+  ]
+}
